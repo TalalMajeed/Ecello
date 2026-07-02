@@ -1,26 +1,186 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --navy: #0a1f5e;
+  --blue: #1560d4;
+  --azure: #2e9bee;
+  --sky: #7cc0f5;
+  --mist: #dcebfb;
+  --paper: #f6fafe;
+  --ink: #0b1220;
+  --muted: #5a6a85;
+  --line: rgba(189, 209, 232, 0.34);
+  --brand: linear-gradient(90deg, #0a1f5e 0%, #1560d4 42%, #2e9bee 74%, #7cc0f5 100%);
+  --brand-soft: linear-gradient(120deg, #1560d4, #2e9bee 60%, #7cc0f5);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-navy: var(--navy);
+  --color-blue: var(--blue);
+  --color-azure: var(--azure);
+  --color-sky: var(--sky);
+  --color-mist: var(--mist);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-bricolage);
+  --font-wordmark: var(--font-baloo);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.wordmark {
+  font-family: var(--font-wordmark);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  background: var(--brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.text-gradient {
+  background: var(--brand);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes sheen {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(-2%, -2%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+}
+
+@keyframes drift-right {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.9);
+  }
+  10% {
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(50vw, -10px) scale(1.05);
+  }
+  90% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(100vw + 80px), 6px) scale(1);
+  }
+}
+
+@keyframes drift-left {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.9);
+  }
+  10% {
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate(-50vw, 10px) scale(1.05);
+  }
+  90% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-100vw - 80px), -8px) scale(1);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-sheen {
+  animation: sheen 7s ease-in-out infinite;
+}
+
+.animate-drift {
+  animation: drift 14s ease-in-out infinite alternate;
+}
+
+.bubble-ltr {
+  left: -40px;
+  animation: drift-right var(--dur, 16s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.bubble-rtl {
+  right: -40px;
+  animation: drift-left var(--dur, 18s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
