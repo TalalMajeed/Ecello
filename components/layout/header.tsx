@@ -2,15 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import type { Messages } from "@/lib/i18n";
 
-const NAV_LINKS = [
-  { href: "#about", label: "Who we are" },
-  { href: "#process", label: "Process" },
-  { href: "#trust", label: "Reviews" },
-  { href: "#contact", label: "Contact" },
-];
+type HeaderProps = {
+  content: Messages["header"];
+};
 
-export default function Header() {
+export default function Header({ content }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -31,11 +29,11 @@ export default function Header() {
         }`}
       >
         <div className="max-w-[1180px] mx-auto px-6.5 py-4 flex items-center justify-between gap-4.5">
-          <a className="flex items-center gap-2.5" href="#top" aria-label="Ecello Labs home">
+          <a className="flex items-center gap-2.5" href="#top" aria-label={content.homeLabel}>
             <span className="wordmark text-[31px]">ecello</span>
           </a>
           <nav className="hidden md:flex items-center gap-8.5">
-            {NAV_LINKS.map((link) => (
+            {content.nav.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
@@ -51,11 +49,11 @@ export default function Header() {
             href="mailto:alex@ecello.net?subject=Let's%20talk"
             className="hidden md:inline-flex !bg-[--color-navy] !text-white"
           >
-            Book a call
+            {content.cta}
           </Button>
           <button
             className="flex md:hidden flex-col gap-1.5 p-2 bg-transparent border-none cursor-pointer"
-            aria-label="Open menu"
+            aria-label={content.openMenu}
             onClick={() => setMenuOpen((v) => !v)}
           >
             <span className="w-6 h-0.5 bg-[--color-navy] rounded-sm" />
@@ -70,7 +68,7 @@ export default function Header() {
           menuOpen ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        {NAV_LINKS.map((link) => (
+        {content.nav.map((link) => (
           <a
             key={link.href}
             href={link.href}
@@ -87,7 +85,7 @@ export default function Header() {
           className="mt-6 justify-center !bg-[--color-navy] !text-white"
           onClick={() => setMenuOpen(false)}
         >
-          Book a call
+          {content.cta}
         </Button>
       </div>
     </>

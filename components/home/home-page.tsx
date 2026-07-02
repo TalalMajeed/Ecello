@@ -3,62 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Ship from "@/components/ui/ship";
+import type { HomeContent } from "@/lib/i18n";
 
 const ABOUT_PHOTOS = [
   "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80",
   "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=900&q=80",
   "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=80",
-];
-
-const STATS: { value: number; suffix: string; label: string }[] = [
-  { value: 10, suffix: "+", label: "Years of combined team experience" },
-  { value: 30, suffix: "+", label: "Products designed & delivered" },
-  { value: 100, suffix: "%", label: "Code ownership handed to you" },
-];
-
-const PROCESS = [
-  {
-    no: "01",
-    title: "We Talk",
-    desc: "A quick, no-cost call to understand what's slowing you down — and a straight answer on whether we can actually help.",
-  },
-  {
-    no: "02",
-    title: "We Build",
-    desc: "We design and build the smallest thing that solves it, keeping you in the loop with plain-language updates the whole way.",
-  },
-  {
-    no: "03",
-    title: "We Deliver",
-    desc: "We launch it, hand it over cleanly, and stay close to keep it running smoothly as your business grows.",
-  },
-];
-
-const TESTIMONIALS = [
-  {
-    quote:
-      "They took a process that ate two days a week and automated it end to end. We got the time back and the reporting is finally something we trust.",
-    name: "Sarah Lindqvist",
-    role: "Operations Lead, Nordwind Logistics",
-  },
-  {
-    quote:
-      "Straight talk, no jargon, and a working product faster than any agency we've hired. They told us what not to build, which saved us real money.",
-    name: "Marcus Feld",
-    role: "Founder, Feld & Co.",
-  },
-  {
-    quote:
-      "The assistant they built answers 80% of our customer questions on its own. Our team finally focuses on the conversations that actually need a human.",
-    name: "Priya Nair",
-    role: "Head of Support, Bright Retail",
-  },
-  {
-    quote:
-      "We own everything they made, it's clean, documented, and still running without a hitch a year later. Rare to find people who work like that.",
-    name: "Tomas Berg",
-    role: "CTO, Havenmark Group",
-  },
 ];
 
 const BUBBLES: Array<{
@@ -118,8 +68,6 @@ function Stat({ value, suffix, label }: { value: number; suffix: string; label: 
   );
 }
 
-const LEN = TESTIMONIALS.length;
-
 function initials(name: string) {
   return name
     .split(" ")
@@ -128,7 +76,11 @@ function initials(name: string) {
     .join("");
 }
 
-export default function Home() {
+type HomePageProps = {
+  content: HomeContent;
+};
+
+export default function HomePage({ content }: HomePageProps) {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [slide, setSlide] = useState(0);
   const [perView, setPerView] = useState(1);
@@ -137,7 +89,8 @@ export default function Home() {
   const drag = useRef({ startX: 0, active: false, width: 1 });
   const draggingRef = useRef(false);
 
-  const pages = Math.ceil(LEN / perView);
+  const len = content.trust.testimonials.length;
+  const pages = Math.ceil(len / perView);
   const current = Math.min(slide, pages - 1);
   const prev = () => setSlide((s) => (Math.min(s, pages - 1) - 1 + pages) % pages);
   const next = () => setSlide((s) => (Math.min(s, pages - 1) + 1) % pages);
@@ -182,13 +135,13 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const total = Math.ceil(LEN / perView);
+    const total = Math.ceil(len / perView);
     const id = setInterval(() => {
       if (draggingRef.current) return;
       setSlide((s) => (s + 1) % total);
     }, 5500);
     return () => clearInterval(id);
-  }, [perView]);
+  }, [len, perView]);
 
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -225,15 +178,14 @@ export default function Home() {
           <div className="max-w-[560px] min-w-0">
             <h1 className="text-[clamp(44px,6.4vw,80px)] font-extrabold mt-5.5">
               <span className="block overflow-hidden">
-                <span className="block">Shipping AI</span>
+                <span className="block">{content.hero.titleTop}</span>
               </span>
               <span className="block overflow-hidden">
-                <span className="block text-gradient animate-sheen">for your business.</span>
+                <span className="block text-gradient animate-sheen">{content.hero.titleBottom}</span>
               </span>
             </h1>
             <p className="text-[clamp(17px,1.7vw,20px)] text-[--color-muted] mt-6 max-w-[520px]">
-              We build digital tools, assistants, and software that take real work off your team&apos;s
-              plate. Quality you can trust and results you can see!
+              {content.hero.body}
             </p>
             <div className="flex gap-3.5 mt-8.5 flex-wrap">
               <Button
@@ -242,10 +194,10 @@ export default function Home() {
                 href="mailto:alex@ecello.net?subject=Let's%20talk"
                 className="!px-6.5 !py-4 !text-base"
               >
-                Book a call
+                {content.hero.primaryCta}
               </Button>
               <Button variant="ghost" href="#about" className="!px-6.5 !py-4 !text-base">
-                Who we are
+                {content.hero.secondaryCta}
               </Button>
             </div>
           </div>
@@ -256,7 +208,7 @@ export default function Home() {
         <Button
           variant="scrollDown"
           href="#about"
-          aria-label="Scroll down to who we are"
+          aria-label={content.hero.scrollLabel}
           className="absolute left-1/2 bottom-6 z-20 -translate-x-1/2 hover:-translate-x-1/2"
         >
           ↓
@@ -266,7 +218,7 @@ export default function Home() {
       <Button
         variant="scrollUp"
         href="#top"
-        aria-label="Back to top"
+        aria-label={content.hero.backToTopLabel}
         className={`fixed right-6.5 bottom-6.5 z-70 transition-[opacity,transform,background,border-color,color] duration-300 ${
           showBackToTop
             ? "opacity-100 pointer-events-auto translate-y-0"
@@ -300,7 +252,7 @@ export default function Home() {
         </div>
         <div className="relative z-[2] max-w-[1180px] mx-auto px-6.5">
           <div className="stats-grid grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-6">
-            {STATS.map((s) => (
+            {content.stats.map((s) => (
               <div key={s.label} className="reveal">
                 <Stat value={s.value} suffix={s.suffix} label={s.label} />
               </div>
@@ -314,40 +266,36 @@ export default function Home() {
         <div className="max-w-[1180px] mx-auto px-6.5 grid grid-cols-1 md:grid-cols-[1.02fr_.98fr] gap-14 md:gap-16 items-center">
           <div className="reveal min-w-0">
             <span className="text-xs font-bold tracking-[0.16em] uppercase text-[--color-azure]">
-              Who we are
+              {content.about.eyebrow}
             </span>
             <h2 className="text-[clamp(30px,4.4vw,52px)] font-extrabold mt-4">
-              A small studio that ships real things.
+              {content.about.title}
             </h2>
-            <p className="text-[--color-muted] text-[17px] leading-relaxed mt-6">
-              Ecello Labs is a remote AI &amp; software studio based in Bremerhaven, Germany, working
-              with teams across Europe and beyond. We&apos;re a tight group of engineers and designers
-              who&apos;d rather build something that works than sell you a slide deck.
-            </p>
-            <p className="text-[--color-muted] text-[17px] leading-relaxed mt-4">
-              We take the repetitive, time-draining parts of your business and turn them into tools,
-              assistants, and automations your team can actually rely on. Plain language, fair
-              pricing, and full ownership handed back to you — always.
-            </p>
+            {content.about.body.map((paragraph, i) => (
+              <p
+                key={paragraph}
+                className={`text-[--color-muted] text-[17px] leading-relaxed ${i === 0 ? "mt-6" : "mt-4"}`}
+              >
+                {paragraph}
+              </p>
+            ))}
             <div className="flex flex-col gap-3 mt-8">
-              {["Plain language, always", "You own everything we build", "Fair, upfront pricing"].map(
-                (item) => (
-                  <span key={item} className="inline-flex items-center gap-2 text-[15px] font-medium text-[--color-ink]">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2.6}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-[17px] h-[17px] text-[--color-azure] flex-none"
-                    >
-                      <path d="M20 6L9 17l-5-5" />
-                    </svg>
-                    {item}
-                  </span>
-                )
-              )}
+              {content.about.bullets.map((item) => (
+                <span key={item} className="inline-flex items-center gap-2 text-[15px] font-medium text-[--color-ink]">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.6}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-[17px] h-[17px] text-[--color-azure] flex-none"
+                  >
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                  {item}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -364,7 +312,7 @@ export default function Home() {
                   <img
                     key={src}
                     src={src}
-                    alt="The Ecello Labs team at work"
+                    alt={content.about.imageAlt}
                     className="absolute inset-0 w-full h-full object-cover [animation:crossfade_21s_ease-in-out_infinite]"
                     style={{ animationDelay: `${i * -7}s` }}
                   />
@@ -379,18 +327,18 @@ export default function Home() {
       <section id="process" className="py-24 overflow-hidden bg-white">
         <div className="max-w-[1180px] mx-auto px-6.5 text-center reveal">
           <span className="text-xs font-bold tracking-[0.16em] uppercase text-[--color-azure]">
-            The process
+            {content.process.eyebrow}
           </span>
           <h2 className="text-[clamp(30px,4.4vw,52px)] font-extrabold mt-4">
-            We Talk. We Build. We Deliver.
+            {content.process.title}
           </h2>
           <p className="text-[--color-muted] text-[17px] mt-5 max-w-[560px] mx-auto">
-            A short process with honest updates, so you always know exactly where things stand.
+            {content.process.body}
           </p>
         </div>
 
         <div className="max-w-[1180px] mx-auto px-6.5 mt-20 grid grid-cols-1 md:grid-cols-3 gap-y-16 md:gap-x-8 lg:gap-x-12">
-          {PROCESS.map((step, i) => (
+          {content.process.steps.map((step, i) => (
             <div key={step.no} className="reveal flex justify-center">
               <div className="float-box w-full max-w-[344px]" style={{ animationDelay: `${i * -1.6}s` }}>
                 <div className="box-wrap">
@@ -430,10 +378,10 @@ export default function Home() {
         <div className="max-w-[1040px] mx-auto px-6.5">
           <div className="text-center">
             <span className="reveal block text-xs font-bold tracking-[0.16em] uppercase text-[--color-azure]">
-              Why trust us
+              {content.trust.eyebrow}
             </span>
             <h2 className="reveal text-[clamp(30px,4.4vw,52px)] font-extrabold mt-4">
-              Teams that stopped guessing.
+              {content.trust.title}
             </h2>
           </div>
 
@@ -441,7 +389,7 @@ export default function Home() {
             {/* Prev arrow */}
             <button
               onClick={prev}
-              aria-label="Previous review"
+              aria-label={content.trust.previous}
               className="hidden sm:grid flex-none place-items-center w-12 h-12 rounded-full bg-white text-[--color-navy] border-2 border-[--color-navy] transition-colors duration-200 hover:border-[--color-azure] hover:text-[--color-azure] cursor-pointer"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -461,7 +409,7 @@ export default function Home() {
                 className={isDragging ? "flex" : "flex transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)]"}
                 style={{ transform: `translateX(calc(-${current * 100}% + ${dragX}px))` }}
               >
-                {TESTIMONIALS.map((t) => (
+                {content.trust.testimonials.map((t) => (
                   <div
                     key={t.name}
                     className="flex-none px-2 md:px-3"
@@ -497,7 +445,7 @@ export default function Home() {
             {/* Next arrow */}
             <button
               onClick={next}
-              aria-label="Next review"
+              aria-label={content.trust.next}
               className="hidden sm:grid flex-none place-items-center w-12 h-12 rounded-full bg-white text-[--color-navy] border-2 border-[--color-navy] transition-colors duration-200 hover:border-[--color-azure] hover:text-[--color-azure] cursor-pointer"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
@@ -511,7 +459,7 @@ export default function Home() {
             {Array.from({ length: pages }).map((_, i) => (
               <button
                 key={i}
-                aria-label={`Go to page ${i + 1}`}
+                aria-label={`${content.trust.goToPage} ${i + 1}`}
                 onClick={() => setSlide(i)}
                 className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                   i === current
@@ -563,11 +511,10 @@ export default function Home() {
             </svg>
             <div className="relative z-[1] max-w-[640px] mx-auto">
               <h2 className="text-[clamp(30px,4vw,50px)] font-extrabold">
-                Have something worth automating?
+                {content.cta.title}
               </h2>
               <p className="text-[#c7d6f2] text-lg mt-4.5">
-                Tell us what&apos;s eating your team&apos;s time. We&apos;ll tell you honestly
-                whether AI can help, and if it can&apos;t, we&apos;ll say so.
+                {content.cta.body}
               </p>
               <Button
                 variant="white"
@@ -575,7 +522,7 @@ export default function Home() {
                 href="mailto:alex@ecello.net?subject=Let's%20talk%20about%20a%20project"
                 className="!mt-8.5 !px-7.5 !py-4 !text-[17px]"
               >
-                Email alex@ecello.net
+                {content.cta.button}
               </Button>
             </div>
           </div>

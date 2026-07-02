@@ -1,17 +1,10 @@
-const STUDIO_LINKS = [
-  { href: "#about", label: "Who we are" },
-  { href: "#process", label: "Our process" },
-  { href: "#trust", label: "Reviews" },
-  { href: "mailto:alex@ecello.net?subject=Let's%20talk", label: "Book a call" },
-];
+import type { Messages } from "@/lib/i18n";
 
-const REACH_LINKS = [
-  { href: "mailto:alex@ecello.net", label: "alex@ecello.net" },
-  { href: "#top", label: "Bremerhaven, Germany" },
-  { href: "#top", label: "Remote-first · Europe" },
-];
+type FooterProps = {
+  content: Messages["footer"];
+};
 
-export default function Footer() {
+export default function Footer({ content }: FooterProps) {
   return (
     <footer className="pt-[70px] pb-10 bg-white border-t border-[rgba(189,209,232,0.14)]">
       <div className="max-w-[1180px] mx-auto px-6.5">
@@ -19,15 +12,14 @@ export default function Footer() {
           <div>
             <span className="wordmark text-[30px]">ecello</span>
             <p className="text-[--color-muted] text-[15px] mt-4 max-w-[320px]">
-              AI automation, assistants, and software that take real work off your team&apos;s
-              plate.
+              {content.intro}
             </p>
           </div>
           <div>
             <h4 className="text-xs tracking-[0.14em] uppercase text-[#8b98af] font-bold mb-4">
-              Studio
+              {content.studio}
             </h4>
-            {STUDIO_LINKS.map((link) => (
+            {content.studioLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
@@ -39,9 +31,9 @@ export default function Footer() {
           </div>
           <div>
             <h4 className="text-xs tracking-[0.14em] uppercase text-[#8b98af] font-bold mb-4">
-              Reach us
+              {content.reach}
             </h4>
-            {REACH_LINKS.map((link) => (
+            {content.reachLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
@@ -53,8 +45,8 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex justify-between items-center flex-wrap gap-3 mt-13 pt-6.5 border-t border-[rgba(189,209,232,0.24)] text-[#8b98af] text-[13.5px]">
-          <span>© 2026 Ecello Labs. All rights reserved.</span>
-          <span>Made where the work flows out to sea.</span>
+          <span>{content.rights}</span>
+          <span>{content.note}</span>
         </div>
       </div>
     </footer>
