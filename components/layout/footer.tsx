@@ -1,6 +1,7 @@
 const STUDIO_LINKS = [
-  { href: "#services", label: "What we do" },
-  { href: "#approach", label: "How it works" },
+  { href: "#about", label: "Who we are" },
+  { href: "#process", label: "Our process" },
+  { href: "#trust", label: "Reviews" },
   { href: "mailto:alex@ecello.net?subject=Let's%20talk", label: "Book a call" },
 ];
 

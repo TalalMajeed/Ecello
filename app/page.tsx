@@ -1,93 +1,64 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Ship from "@/components/ui/ship";
 
-const SERVICES = [
+const ABOUT_PHOTOS = [
+  "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80",
+  "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=900&q=80",
+  "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=80",
+];
+
+const STATS: { value: number; suffix: string; label: string }[] = [
+  { value: 10, suffix: "+", label: "Years of combined team experience" },
+  { value: 30, suffix: "+", label: "Products designed & delivered" },
+  { value: 100, suffix: "%", label: "Code ownership handed to you" },
+];
+
+const PROCESS = [
   {
-    tag: "AI Automation",
-    title: "Automate the busywork",
-    desc: "Hand off the repetitive tasks that eat your team's day — data entry, follow-ups, reports — and let them run on their own.",
-    icon: (
-      <path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" />
-    ),
+    no: "01",
+    title: "We Talk",
+    desc: "A quick, no-cost call to understand what's slowing you down — and a straight answer on whether we can actually help.",
   },
   {
-    tag: "Chatbots · LLMs · RAG",
-    title: "Answers, on demand",
-    desc: "An assistant that actually knows your business and answers customers and staff instantly, around the clock.",
-    icon: (
-      <>
-        <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z" />
-        <path d="M9 10h.01M13 10h.01M17 10h.01" />
-      </>
-    ),
+    no: "02",
+    title: "We Build",
+    desc: "We design and build the smallest thing that solves it, keeping you in the loop with plain-language updates the whole way.",
   },
   {
-    tag: "Agentic AI · MCP",
-    title: "AI that gets things done",
-    desc: "Not just chat — AI that takes action and completes multi-step tasks from start to finish, then reports back.",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="3" />
-        <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" />
-      </>
-    ),
-  },
-  {
-    tag: "Generative AI",
-    title: "Create in seconds",
-    desc: "Draft copy, images, and content on demand — so your team ships more without the blank-page slog.",
-    icon: (
-      <>
-        <path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4L12 3z" />
-        <path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14z" />
-      </>
-    ),
-  },
-  {
-    tag: "Web Development",
-    title: "Websites & apps that work",
-    desc: "Fast, modern, easy-to-use web products your customers enjoy and your team can actually maintain.",
-    icon: (
-      <>
-        <rect x="2" y="4" width="20" height="16" rx="2" />
-        <path d="M2 9h20M6 6.5h.01M9 6.5h.01" />
-      </>
-    ),
-  },
-  {
-    tag: "DevOps · MLOps",
-    title: "Keep it all running",
-    desc: "The behind-the-scenes engineering that keeps everything fast, secure, and online — so you never have to think about it.",
-    icon: <path d="M4 17l6-6-6-6M12 19h8" />,
+    no: "03",
+    title: "We Deliver",
+    desc: "We launch it, hand it over cleanly, and stay close to keep it running smoothly as your business grows.",
   },
 ];
 
-const STEPS = [
+const TESTIMONIALS = [
   {
-    no: "STEP 01",
-    title: "Talk",
-    desc: "A quick call to understand what's slowing you down. No cost, no pressure, and a straight answer on whether we can help.",
+    quote:
+      "They took a process that ate two days a week and automated it end to end. We got the time back and the reporting is finally something we trust.",
+    name: "Sarah Lindqvist",
+    role: "Operations Lead, Nordwind Logistics",
   },
   {
-    no: "STEP 02",
-    title: "Build",
-    desc: "We design and build the smallest thing that solves it, and keep you in the loop with plain-language updates the whole way.",
+    quote:
+      "Straight talk, no jargon, and a working product faster than any agency we've hired. They told us what not to build, which saved us real money.",
+    name: "Marcus Feld",
+    role: "Founder, Feld & Co.",
   },
   {
-    no: "STEP 03",
-    title: "Run",
-    desc: "We launch it, hand it over cleanly, and stick around to keep it running smoothly as your business grows.",
+    quote:
+      "The assistant they built answers 80% of our customer questions on its own. Our team finally focuses on the conversations that actually need a human.",
+    name: "Priya Nair",
+    role: "Head of Support, Bright Retail",
   },
-];
-
-const WHY_ITEMS = [
-  "Plain language, always",
-  "You own everything we build",
-  "Built to run reliably",
-  "Fair, upfront pricing",
+  {
+    quote:
+      "We own everything they made, it's clean, documented, and still running without a hitch a year later. Rare to find people who work like that.",
+    name: "Tomas Berg",
+    role: "CTO, Havenmark Group",
+  },
 ];
 
 const BUBBLES: Array<{
@@ -109,24 +80,89 @@ const BUBBLES: Array<{
   { side: "rtl", top: "50%", size: 20, dur: "25s", delay: "-16s" },
 ];
 
-function CheckIcon() {
+function Stat({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [n, setN] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        io.disconnect();
+        const start = performance.now();
+        const dur = 1400;
+        const tick = (now: number) => {
+          const p = Math.min(1, (now - start) / dur);
+          const eased = 1 - Math.pow(1 - p, 3);
+          setN(Math.round(eased * value));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      },
+      { threshold: 0.5 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [value]);
+
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.4}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="w-[18px] h-[18px] text-[--color-azure] flex-none"
-    >
-      <path d="M20 6L9 17l-5-5" />
-    </svg>
+    <div ref={ref} className="text-center">
+      <div className="font-[family-name:var(--font-bricolage)] font-extrabold tracking-[-0.02em] text-[clamp(44px,6vw,68px)] leading-none bg-[linear-gradient(120deg,#8fd0ff,#bfeaff_55%,#e6f6ff)] bg-clip-text text-transparent">
+        {n}
+        {suffix}
+      </div>
+      <p className="mt-3 text-[#c7dcf3] text-[15px] max-w-[220px] mx-auto leading-snug">{label}</p>
+    </div>
   );
+}
+
+const LEN = TESTIMONIALS.length;
+
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("");
 }
 
 export default function Home() {
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [slide, setSlide] = useState(0);
+  const [perView, setPerView] = useState(1);
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const drag = useRef({ startX: 0, active: false, width: 1 });
+  const draggingRef = useRef(false);
+
+  const pages = Math.ceil(LEN / perView);
+  const current = Math.min(slide, pages - 1);
+  const prev = () => setSlide((s) => (Math.min(s, pages - 1) - 1 + pages) % pages);
+  const next = () => setSlide((s) => (Math.min(s, pages - 1) + 1) % pages);
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    drag.current = { startX: e.clientX, active: true, width: e.currentTarget.clientWidth };
+    draggingRef.current = true;
+    setIsDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag.current.active) return;
+    setDragX(e.clientX - drag.current.startX);
+  };
+  const onPointerUp = () => {
+    if (!drag.current.active) return;
+    const dx = dragX;
+    const threshold = Math.min(120, drag.current.width * 0.18);
+    drag.current.active = false;
+    draggingRef.current = false;
+    setIsDragging(false);
+    setDragX(0);
+    if (dx <= -threshold) next();
+    else if (dx >= threshold) prev();
+  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -136,6 +172,23 @@ export default function Home() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const update = () => setPerView(mq.matches ? 2 : 1);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const total = Math.ceil(LEN / perView);
+    const id = setInterval(() => {
+      if (draggingRef.current) return;
+      setSlide((s) => (s + 1) % total);
+    }, 5500);
+    return () => clearInterval(id);
+  }, [perView]);
 
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -152,10 +205,9 @@ export default function Home() {
     const elements = document.querySelectorAll(".reveal");
     elements.forEach((el, i) => {
       const parent = el.parentElement;
-      const staggered =
-        parent?.classList.contains("services-grid") || parent?.classList.contains("steps-grid");
+      const staggered = parent?.classList.contains("stats-grid");
       if (staggered) {
-        (el as HTMLElement).style.transitionDelay = `${(i % 3) * 0.09}s`;
+        (el as HTMLElement).style.transitionDelay = `${(i % 3) * 0.1}s`;
       }
       io.observe(el);
     });
@@ -180,8 +232,8 @@ export default function Home() {
               </span>
             </h1>
             <p className="text-[clamp(17px,1.7vw,20px)] text-[--color-muted] mt-6 max-w-[520px]">
-              We build automation, assistants, and software that take real work off your team&apos;s
-              plate. No jargon, no drama, just tools that quietly do their job.
+              We build digital tools, assistants, and software that take real work off your team&apos;s
+              plate. Quality you can trust and results you can see!
             </p>
             <div className="flex gap-3.5 mt-8.5 flex-wrap">
               <Button
@@ -192,8 +244,8 @@ export default function Home() {
               >
                 Book a call
               </Button>
-              <Button variant="ghost" href="#services" className="!px-6.5 !py-4 !text-base">
-                See what we do
+              <Button variant="ghost" href="#about" className="!px-6.5 !py-4 !text-base">
+                Who we are
               </Button>
             </div>
           </div>
@@ -203,8 +255,8 @@ export default function Home() {
 
         <Button
           variant="scrollDown"
-          href="#services"
-          aria-label="Scroll down to what we do"
+          href="#about"
+          aria-label="Scroll down to who we are"
           className="absolute left-1/2 bottom-6 z-20 -translate-x-1/2 hover:-translate-x-1/2"
         >
           ↓
@@ -224,8 +276,8 @@ export default function Home() {
         ↑
       </Button>
 
-      {/* POSITIONING STRIP */}
-      <div className="reveal relative overflow-hidden py-13 border-y border-white/6 bg-[#08315a]">
+      {/* STATS STRIP */}
+      <div className="relative overflow-hidden py-16 border-y border-white/6 bg-[#08315a]">
         <div className="absolute inset-0 z-0 pointer-events-none [background:radial-gradient(120%_150%_at_50%_50%,#1d6ba8_0%,#135286_34%,#0b3d68_62%,#062a4c_100%)]" />
         <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden" aria-hidden="true">
           {BUBBLES.map((b, i) => (
@@ -247,97 +299,226 @@ export default function Home() {
           ))}
         </div>
         <div className="relative z-[2] max-w-[1180px] mx-auto px-6.5">
-          <p className="max-w-[840px] mx-auto text-center text-[clamp(18px,2vw,23px)] font-[family-name:var(--font-bricolage)] font-medium tracking-[-0.01em] text-[#EAF4FF] leading-[1.35]">
-            A remote AI &amp; software studio in{" "}
-            <span className="bg-[linear-gradient(120deg,#8fd0ff,#bfeaff_60%,#e6f6ff)] bg-clip-text text-transparent">
-              Bremerhaven, Germany
-            </span>{" "}
-            — for teams who&apos;d rather see results than slide decks.
-          </p>
+          <div className="stats-grid grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-6">
+            {STATS.map((s) => (
+              <div key={s.label} className="reveal">
+                <Stat value={s.value} suffix={s.suffix} label={s.label} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* SERVICES */}
-      <section id="services" className="py-24">
-        <div className="max-w-[1180px] mx-auto px-6.5">
-          <div className="reveal max-w-[640px]">
-            <span className="text-[12.5px] font-semibold tracking-[0.16em] uppercase text-[#1560d4] inline-flex items-center gap-2">
-              What we do
+      {/* WHO WE ARE */}
+      <section id="about" className="py-24">
+        <div className="max-w-[1180px] mx-auto px-6.5 grid grid-cols-1 md:grid-cols-[1.02fr_.98fr] gap-14 md:gap-16 items-center">
+          <div className="reveal min-w-0">
+            <span className="text-xs font-bold tracking-[0.16em] uppercase text-[--color-azure]">
+              Who we are
             </span>
-            <h2 className="text-[clamp(30px,3.6vw,46px)] mt-4">
-              Six ways we take work off your plate.
+            <h2 className="text-[clamp(30px,4.4vw,52px)] font-extrabold mt-4">
+              A small studio that ships real things.
             </h2>
-            <p className="text-[--color-muted] text-lg mt-4">
-              Each one starts with a real problem in your business — not a buzzword. Here&apos;s
-              the plain-language version.
+            <p className="text-[--color-muted] text-[17px] leading-relaxed mt-6">
+              Ecello Labs is a remote AI &amp; software studio based in Bremerhaven, Germany, working
+              with teams across Europe and beyond. We&apos;re a tight group of engineers and designers
+              who&apos;d rather build something that works than sell you a slide deck.
             </p>
+            <p className="text-[--color-muted] text-[17px] leading-relaxed mt-4">
+              We take the repetitive, time-draining parts of your business and turn them into tools,
+              assistants, and automations your team can actually rely on. Plain language, fair
+              pricing, and full ownership handed back to you — always.
+            </p>
+            <div className="flex flex-col gap-3 mt-8">
+              {["Plain language, always", "You own everything we build", "Fair, upfront pricing"].map(
+                (item) => (
+                  <span key={item} className="inline-flex items-center gap-2 text-[15px] font-medium text-[--color-ink]">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.6}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-[17px] h-[17px] text-[--color-azure] flex-none"
+                    >
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                    {item}
+                  </span>
+                )
+              )}
+            </div>
           </div>
 
-          <div className="services-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-13">
-            {SERVICES.map((s) => (
-              <article
-                key={s.title}
-                className="reveal group relative bg-white border border-[--color-line] rounded-[22px] px-7 pt-7.5 pb-8 overflow-hidden transition-[transform,border-color] duration-300 ease-[cubic-bezier(.2,.7,.2,1)] hover:-translate-y-2 hover:border-[rgba(46,155,238,0.36)]"
-              >
-                <div className="w-13 h-13 rounded-2xl grid place-items-center mb-5 bg-[linear-gradient(135deg,#eef5ff,#dcecfd)] text-[--color-blue] transition-[transform,background,color] duration-400 group-hover:bg-[--color-navy] group-hover:text-white group-hover:-translate-y-0.5 group-hover:-rotate-3">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-6.5 h-6.5"
-                  >
-                    {s.icon}
-                  </svg>
-                </div>
-                <h3 className="text-[21px] font-bold">{s.title}</h3>
-                <p className="text-[--color-muted] text-[15.5px] mt-2.5">{s.desc}</p>
-                <span className="block mt-4.5 text-[11.5px] font-semibold tracking-[0.08em] uppercase text-[#8b98af]">
-                  {s.tag}
-                </span>
-              </article>
-            ))}
+          {/* Fading photos in a bordered white frame with an offset blue accent */}
+          <div className="reveal relative min-w-0">
+            <span
+              aria-hidden
+              className="absolute -bottom-5 -right-5 w-full h-full border-2 border-[--color-azure] pointer-events-none"
+            />
+            <div className="relative border-2 border-[--color-navy] bg-white p-3">
+              <div className="relative aspect-[4/3] overflow-hidden bg-white">
+                {ABOUT_PHOTOS.map((src, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={src}
+                    src={src}
+                    alt="The Ecello Labs team at work"
+                    className="absolute inset-0 w-full h-full object-cover [animation:crossfade_21s_ease-in-out_infinite]"
+                    style={{ animationDelay: `${i * -7}s` }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* APPROACH */}
-      <section id="approach" className="py-24 bg-white border-y border-[--color-line]">
-        <div className="max-w-[1180px] mx-auto px-6.5">
-          <div className="reveal max-w-[640px]">
-            <span className="text-[12.5px] font-semibold tracking-[0.16em] uppercase text-[--color-blue] inline-flex items-center gap-2">
-              How it works
-            </span>
-            <h2 className="text-[clamp(30px,3.6vw,46px)] mt-4">Three steps. No mystery.</h2>
-            <p className="text-[--color-muted] text-lg mt-4">
-              We keep the process short and the updates honest, so you always know where things
-              stand.
-            </p>
-          </div>
+      {/* PROCESS */}
+      <section id="process" className="py-24 overflow-hidden">
+        <div className="max-w-[1180px] mx-auto px-6.5 text-center reveal">
+          <span className="text-xs font-bold tracking-[0.16em] uppercase text-[--color-azure]">
+            The process
+          </span>
+          <h2 className="text-[clamp(30px,4.4vw,52px)] font-extrabold mt-4">
+            We Talk. We Build. We Deliver.
+          </h2>
+          <p className="text-[--color-muted] text-[17px] mt-5 max-w-[560px] mx-auto">
+            A short process with honest updates, so you always know exactly where things stand.
+          </p>
+        </div>
 
-          <div className="steps-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6.5 mt-12.5">
-            {STEPS.map((step) => (
-              <div key={step.no} className="reveal">
-                <span className="font-[family-name:var(--font-bricolage)] font-extrabold text-[15px] text-[--color-azure] tracking-[0.05em]">
-                  {step.no}
-                </span>
-                <h3 className="text-[23px] mt-3.5">{step.title}</h3>
-                <p className="text-[--color-muted] mt-3 text-base">{step.desc}</p>
+        <div className="max-w-[1180px] mx-auto px-6.5 mt-20 grid grid-cols-1 md:grid-cols-3 gap-y-16 md:gap-x-8 lg:gap-x-12">
+          {PROCESS.map((step, i) => (
+            <div key={step.no} className="reveal flex justify-center">
+              <div className="float-box w-full max-w-[344px]" style={{ animationDelay: `${i * -1.6}s` }}>
+                <div className="box-wrap">
+                  {/* box outline — front face + receding top/right edges */}
+                  <svg className="box-wire" viewBox="0 0 344 316" aria-hidden="true">
+                    <path
+                      className="edge"
+                      vectorEffect="non-scaling-stroke"
+                      d="M0 44 H296 V316 H0 Z M0 44 L48 0 L344 0 L296 44 M344 0 L344 272 L296 316"
+                    />
+                    {/* tape strip across the lid, wrapping down and closing off on the right face */}
+                    <path
+                      className="tape"
+                      vectorEffect="non-scaling-stroke"
+                      d="M28.4 18 L324.4 18 L324.4 138 L315.6 146 L315.6 26 L19.6 26 Z"
+                    />
+                  </svg>
+                  {/* front cover — the text lives here */}
+                  <div className="box-cover p-7">
+                    <span className="grid place-items-center w-12 h-12 rounded-full border-2 border-black text-black font-[family-name:var(--font-bricolage)] font-extrabold text-lg">
+                      {step.no}
+                    </span>
+                    <h3 className="text-2xl font-extrabold mt-5 text-[--color-ink]">{step.title}</h3>
+                    <p className="text-[--color-muted] text-[14.5px] leading-relaxed mt-3">
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
               </div>
-            ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* WHY TRUST US */}
+      <section id="trust" className="py-24 bg-[--color-paper] border-y border-[rgba(189,209,232,0.24)]">
+        <div className="max-w-[1040px] mx-auto px-6.5">
+          <div className="text-center">
+            <span className="reveal block text-xs font-bold tracking-[0.16em] uppercase text-[--color-azure]">
+              Why trust us
+            </span>
+            <h2 className="reveal text-[clamp(30px,4.4vw,52px)] font-extrabold mt-4">
+              Teams that stopped guessing.
+            </h2>
           </div>
 
-          <div className="reveal flex flex-wrap gap-3.5 mt-14">
-            {WHY_ITEMS.map((item) => (
-              <span
-                key={item}
-                className="flex items-center gap-2.5 text-[15px] font-medium text-[--color-navy] bg-[--color-paper] border border-[--color-line] rounded-full py-2.5 pl-3.5 pr-4.5"
+          <div className="reveal mt-14 flex items-center gap-4 sm:gap-6">
+            {/* Prev arrow */}
+            <button
+              onClick={prev}
+              aria-label="Previous review"
+              className="hidden sm:grid flex-none place-items-center w-12 h-12 rounded-full bg-white text-[--color-navy] border-2 border-[--color-navy] transition-colors duration-200 hover:border-[--color-azure] hover:text-[--color-azure] cursor-pointer"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+
+            {/* Draggable track */}
+            <div
+              className={`min-w-0 flex-1 overflow-hidden select-none touch-pan-y ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerUp}
+            >
+              <div
+                className={isDragging ? "flex" : "flex transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)]"}
+                style={{ transform: `translateX(calc(-${current * 100}% + ${dragX}px))` }}
               >
-                <CheckIcon />
-                {item}
-              </span>
+                {TESTIMONIALS.map((t) => (
+                  <div
+                    key={t.name}
+                    className="flex-none px-2 md:px-3"
+                    style={{ width: `${100 / perView}%` }}
+                  >
+                    <figure className="h-full flex flex-col rounded-[26px] border-2 border-[--color-line] bg-white px-7 py-8 md:px-9 md:py-9 text-left">
+                      {/* rating */}
+                      <div className="flex gap-1 text-[--color-azure]" aria-hidden>
+                        {Array.from({ length: 5 }).map((_, s) => (
+                          <svg key={s} viewBox="0 0 24 24" fill="currentColor" className="w-[18px] h-[18px]">
+                            <path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.9 5.9 20.4l1.5-6.8L2.2 9l6.9-.7L12 2z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <blockquote className="flex-1 font-[family-name:var(--font-bricolage)] text-[clamp(18px,1.9vw,22px)] font-medium leading-snug tracking-[-0.01em] text-[--color-ink] mt-5">
+                        {t.quote}
+                      </blockquote>
+                      <figcaption className="flex items-center gap-4 mt-7 pt-6 border-t border-[--color-line]">
+                        <span className="grid place-items-center w-12 h-12 rounded-full bg-[--color-navy] text-white font-bold text-[15px] flex-none">
+                          {initials(t.name)}
+                        </span>
+                        <span>
+                          <span className="block font-bold text-[--color-navy] leading-tight">{t.name}</span>
+                          <span className="block text-[--color-muted] text-sm mt-0.5">{t.role}</span>
+                        </span>
+                      </figcaption>
+                    </figure>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Next arrow */}
+            <button
+              onClick={next}
+              aria-label="Next review"
+              className="hidden sm:grid flex-none place-items-center w-12 h-12 rounded-full bg-white text-[--color-navy] border-2 border-[--color-navy] transition-colors duration-200 hover:border-[--color-azure] hover:text-[--color-azure] cursor-pointer"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Dots */}
+          <div className="flex items-center justify-center gap-2.5 mt-9">
+            {Array.from({ length: pages }).map((_, i) => (
+              <button
+                key={i}
+                aria-label={`Go to page ${i + 1}`}
+                onClick={() => setSlide(i)}
+                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  i === current
+                    ? "w-7 bg-[--color-blue]"
+                    : "w-2.5 bg-[rgba(21,96,212,0.24)] hover:bg-[rgba(21,96,212,0.5)]"
+                }`}
+              />
             ))}
           </div>
         </div>

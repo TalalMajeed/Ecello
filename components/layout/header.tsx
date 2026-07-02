@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 const NAV_LINKS = [
-  { href: "#services", label: "What we do" },
-  { href: "#approach", label: "How it works" },
+  { href: "#about", label: "Who we are" },
+  { href: "#process", label: "Process" },
+  { href: "#trust", label: "Reviews" },
   { href: "#contact", label: "Contact" },
 ];
 
