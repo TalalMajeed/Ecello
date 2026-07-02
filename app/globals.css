@@ -138,12 +138,12 @@ h3 {
   }
 }
 
-@keyframes wave-move {
+@keyframes wave-scroll {
   from {
-    transform: translateX(0);
+    background-position-x: 0;
   }
   to {
-    transform: translateX(-50%);
+    background-position-x: -28px;
   }
 }
 
