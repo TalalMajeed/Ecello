@@ -376,7 +376,7 @@ export default function Home() {
       </section>
 
       {/* PROCESS */}
-      <section id="process" className="py-24 overflow-hidden">
+      <section id="process" className="py-24 overflow-hidden bg-white">
         <div className="max-w-[1180px] mx-auto px-6.5 text-center reveal">
           <span className="text-xs font-bold tracking-[0.16em] uppercase text-[--color-azure]">
             The process
