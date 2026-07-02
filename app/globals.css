@@ -138,6 +138,15 @@ h3 {
   }
 }
 
+@keyframes wave-move {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 .animate-sheen {
   animation: sheen 7s ease-in-out infinite;
 }
